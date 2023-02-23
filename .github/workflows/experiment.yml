@@ -24,11 +24,12 @@ jobs:
             cd $I
             for J in $(find . -name '*.spec.ts')
             do
-              echo $J
+              echo "::group::Running $I -> $J"
               if ! npx playwright test $J
               then
                 STATUS=$?
               fi
             done
+            cd -
           done
           exit $STATUS
