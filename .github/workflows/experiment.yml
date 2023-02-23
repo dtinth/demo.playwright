@@ -29,6 +29,7 @@ jobs:
               then
                 STATUS=$?
               fi
+              echo "::endgroup::"
             done
             cd -
           done
