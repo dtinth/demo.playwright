@@ -1,0 +1,32 @@
+name: experiment
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [parallelization]
+  push:
+    branches: [parallelization]
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    container: mcr.microsoft.com/playwright:v1.28.1-focal
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+      - run: npm ci
+      - run: npx playwright install
+      - run: |
+          STATUS=0
+          for I in accessibility basic chrome-extension drag-and-drop fixtures github-api performance svgomg todomvc visual-comparison
+          do
+            cd $I
+            for J in $(find . -name '*.spec.ts')
+            do
+              echo $J
+              if ! npx playwright test $J
+              then
+                STATUS=$?
+              fi
+            done
+          end
